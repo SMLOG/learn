@@ -306,7 +306,7 @@ export default {
     },
     async savelog() {
       let id = this.log.id;
-      if (!log.logBy) log.logBy = this.config.logBy;
+      if (!this.log.logBy) this.log.logBy = this.config.logBy;
       let result = await fetch("/api/supportlog/save", {
         body: JSON.stringify(this.log),
         method: "post",

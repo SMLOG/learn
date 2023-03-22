@@ -155,6 +155,7 @@ let types = [
 let curIndex = ref(0);
 let showItems = ref(false);
 
+let selectIndex = ref(0);
 function cur() {
   return types[curIndex.value];
 }
@@ -162,6 +163,7 @@ function clickIndex(i) {
   console.log(i);
   curIndex.value = i;
   showItems.value = false;
+  selectIndex.value = 0;
 }
 </script>
 <template>
@@ -212,13 +214,19 @@ function clickIndex(i) {
     "
   >
     <div style="margin: 10px" v-if="showItems">
-      <div v-for="item in cur().items" :key="item.id">{{ item.title }}</div>
+      <div
+        v-for="(item, i) in cur().items"
+        :key="item.id"
+        @click="(selectIndex = i), (showItems = false)"
+      >
+        {{ item.title }}
+      </div>
     </div>
     <div style="display: flex">
       <div style="margin-left: 10px; margin-right: 10px">O:{{ curIndex }}</div>
       <div style="flex-grow: 1" @click="showItems = !showItems">
         <span>{{ cur()["name"] }}</span
-        ><span>{{ cur()["items"][0].title }}</span>
+        ><span>{{ cur()["items"][selectIndex].title }}</span>
       </div>
       <div style="margin-left: 10px; margin-right: 10px; margin-right: 10px">
         M
