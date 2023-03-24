@@ -1,21 +1,29 @@
 <script setup>
 import { ref } from "vue";
 
-let links = ref(["https://www.gov.hk/en/about/abouthk/holiday/2023.htm"]);
+let links = ref([
+  {
+    url: "https://www.gov.hk/en/about/abouthk/holiday/2023.htm",
+    name: "holiday",
+  },
+  {
+    name: "sql developer",
+    url: "https://www.oracle.com/webfolder/technetwork/tutorials/obe/db/apex/r51/testing_and_debugging_sqldeveloper/testing_and_debugging_sqldeveloper.html#overview",
+  },
+]);
 </script>
 
 <template>
   <div>
     <div>文件列表</div>
-    <div>
-      <a
-        v-for="link in links"
-        :key="link"
-        target="_blank"
-        rel="noreferrer"
-        :href="link"
-        >{{ link }}</a
-      >
+    <div
+      v-for="item in links"
+      :key="item.name"
+      target="_blank"
+      rel="noreferrer"
+      :href="item.url"
+    >
+      <a>{{ item.name }} - {{ item.url }}</a>
     </div>
     <div>
       <div>
