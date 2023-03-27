@@ -28,7 +28,6 @@ let links = ref([
     <div>
       <div>
         search:<input v-model.trim="search" @focus="this.search = ''" />
-        <input type="checkbox" v-model="ignoreCase" /> ignore case
       </div>
     </div>
     <ul>

@@ -19,7 +19,7 @@ onMounted(() => {});
     <div class="navBar">
       <div class="container">
         <nav>
-          <RouterLink to="/support" class="menuLink">Home</RouterLink>
+          <RouterLink to="/" class="menuLink">Home</RouterLink>
           <RouterLink to="/support" class="menuLink">support</RouterLink>
           <RouterLink to="/docs" class="menuLink">Docs</RouterLink>
           <RouterLink to="/learn" class="menuLink">Learn</RouterLink>
@@ -128,5 +128,8 @@ onMounted(() => {});
 
 #topbar nav {
   display: flex;
+}
+.router-link-active {
+  border-bottom: 1px solid gray;
 }
 </style>
