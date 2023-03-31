@@ -1,7 +1,11 @@
 <template>
   <div>
     <div @click="showcontact = !showcontact">contact</div>
-    <div v-if="showcontact">:{{ config.contact1 }}</div>
+    <div v-if="showcontact">
+      <div v-for="contact in config.contacts" :key="contact">
+        {{ contact }}
+      </div>
+    </div>
   </div>
   <div>
     <div>support {{ log.id }}</div>
