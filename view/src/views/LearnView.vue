@@ -1,16 +1,18 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useConfigStore } from "@/stores/config";
-import Detail from "@/components/Detail.vue";
+import Media from "@/components/Media.vue";
+import { useMediaStore } from "@/stores/media";
 
 const itemsRef = ref(null);
 const itemsRef2 = ref(null);
-const itemsRef3 = ref(null);
+const media = useMediaStore();
 
 onMounted(() => {
   document.body.addEventListener("click", (event) => {
     if (
       showItems.value &&
+      itemsRef.value &&
       !itemsRef.value.contains(event.target) &&
       !itemsRef2.value.contains(event.target)
     ) {
@@ -23,63 +25,74 @@ const config = useConfigStore();
 
 let types = ref([]);
 
-types.value.push({ id: 0, title: "Words", items: [] });
-
-fetch("/api/word/list")
-  .then((r) => r.json())
-  .then((r) =>
-    types.value[0].items.push(...r.map((e) => ((e.title = e.en), e)))
-  );
-
 fetch("/api/list")
   .then((r) => r.json())
   .then((r) => types.value.push(...r));
 
-let curIndex = ref(0);
+let curIndex = ref(-1);
 let showItems = ref(0);
 
-let cur = ref({});
+let curType = ref({});
 let curItem = ref({});
-
-let selectIndex = ref(0);
 
 function clickType(i) {
   console.log(i);
   curIndex.value = i;
   showItems.value = 0;
-  selectIndex.value = 0;
 
-  cur.value = types.value[curIndex.value];
+  curType.value = types.value[curIndex.value];
 }
-let curTab = ref("Home");
 
 let showHome = ref(true);
 function clickHome() {
   showHome.value = !showHome.value;
 }
-function clickItem(i) {
-  showHome.value = false;
-  selectIndex.value = i;
-  console.log(cur.items);
-  curItem.value = cur.value.items[selectIndex.value];
+function clickItem(i, isclick) {
+  curType.value.selectIndex = i;
+  console.log(curType.items);
+  curItem.value = curType.value.items[curType.value.selectIndex];
   showItems.value = 0;
-  curTab.value = "Detail";
+  if (isclick) showHome.value = false;
+  if (curType.value.type == "media") media.$patch({ item: curItem.value });
 }
-function nextItem() {
-  if (selectIndex.value >= cur.value.items.length - 1) return;
-  selectIndex.value++;
-  curItem.value = cur.value.items[selectIndex.value];
+function nextItem(isNext) {
+  if (isNext) {
+    curType.value.selectIndex++;
+    if (curType.value.selectIndex > curType.value.items.length - 1)
+      curType.value.selectIndex = 0;
+  } else {
+    curType.value.selectIndex--;
+    if (curType.value.selectIndex < 0)
+      curType.value.selectIndex = curType.value.items.length - 1;
+  }
+
+  clickItem(curType.value.selectIndex);
 }
 
-function prevItem() {
-  if (selectIndex.value <= 0) return;
-  selectIndex.value--;
-  curItem.value = cur.value.items[selectIndex.value];
+function loadif(cur) {
+  if (!cur.items || !cur.items.length) {
+    if (!cur.items) cur.items = [];
+    cur.selectIndex = -1;
+    fetch("/api/" + cur.type + "/list/" + cur.name)
+      .then((r) => r.json())
+      .then((r) => cur.items.push(...r));
+  }
+  if (cur.selectIndex > -1) {
+    setTimeout(() => {
+      //showItems && scroll2el($("#item" + cur.selectIndex), $(itemsRef.value));
+      showItems &&
+        $("#item" + cur.selectIndex)[0].scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
+    }, 100);
+  }
 }
 </script>
 <template>
   <div class="pans">
-    <div class="panel home" v-show="showHome">
+    <div class="panel" v-show="showHome" style="z-index: 1">
       <div style="margin: 10px">
         <a style="display: inline-block; margin-right: 10px"
           >Subscription{{ types.length }}-{{ showItems }}</a
@@ -92,41 +105,44 @@ function prevItem() {
           :key="type.name"
           class="list_item"
           @click="clickType(i)"
+          :class="{ cur: curIndex == i }"
         >
           <div>{{ i + 1 }} {{ type.name }}</div>
           <div>{{ type.update }}</div>
-          <div>{{ type.items.length }}</div>
+          <div>{{ type.items && type.items.length }}</div>
         </div>
       </div>
     </div>
-
-    <Detail
-      v-show="curTab == 'Detail'"
-      style="padding: 20px"
-      :item="curItem"
-      class="tab_detail"
-    />
+    <div class="panel" v-show="curType.type == 'media'">
+      <Media @ended="nextItem(1)" />
+    </div>
   </div>
   <div id="bottom">
     <div
       style="display: flex; justify-content: space-between; margin: 0 10px"
-      v-if="curTab == 'Detail' && !showHome"
+      v-if="!showHome"
     >
-      <a @click="prevItem()">Prev</a>
-      <a @click="nextItem()">Next</a>
+      <a @click="nextItem(0)">Prev</a>
+      <a @click="nextItem(1)">Next</a>
     </div>
 
     <div
       class="items"
-      style="margin: 10px; max-height: calc(100vh - 100px); overflow-y: auto"
-      v-if="showItems"
+      style="
+        margin-left: 10px;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+      "
+      v-show="showItems"
       ref="itemsRef"
     >
-      <div v-if="showItems == 1">
+      <div>
         <div
-          v-for="(item, i) in cur.items"
+          v-for="(item, i) in curType.items"
           :key="item.id"
-          @click="clickItem(i)"
+          @click="clickItem(i, 1)"
+          :class="{ cur: curType.selectIndex == i }"
+          :id="'item' + i"
         >
           {{ i + 1 }}. {{ item.title }}
         </div>
@@ -142,13 +158,27 @@ function prevItem() {
       </div>
       <div
         style="flex-grow: 1"
-        @click="showItems = showItems == 0 ? 1 : 0"
         ref="itemsRef2"
+        @click="
+          showItems = showItems == 0 ? 1 : 0;
+          loadif(curType);
+        "
       >
-        <span>{{ cur.name }}</span
-        ><span v-if="cur.items && cur.items.length">{{
-          cur.items[selectIndex].title
-        }}</span>
+        <span style="margin-right: 5px">{{ curType.name }}</span
+        ><span
+          v-if="
+            curType.items && curType.items.length && curType.selectIndex > -1
+          "
+          >({{ curType.selectIndex + 1 }}/{{ curType.items.length }})
+          {{ curType.items[curType.selectIndex].title }}</span
+        >
+      </div>
+      <div
+        v-if="media.item.link"
+        @click="media.$patch({ playing: !media.playing })"
+      >
+        <b v-if="media.playing">pause</b>
+        <b v-else>play</b>
       </div>
       <div
         style="margin-left: 10px; margin-right: 10px; margin-right: 10px"
@@ -171,15 +201,15 @@ function prevItem() {
   bottom: 25px;
   left: 0;
   right: 0;
-  overflow: auto;
+  overflow: hidden;
 }
-.home {
+.pans .panel {
   position: absolute;
   top: 0;
-  bottom: 0;
   left: 0;
+  bottom: 0;
   right: 0;
-  z-index: 1000;
+  overflow: auto;
   background: white;
 }
 #bottom {
@@ -199,6 +229,7 @@ function prevItem() {
   right: 0;
   left: 0;
   background: whitesmoke;
+  overflow: auto;
 }
 .list_item {
   min-height: 200px;
@@ -207,5 +238,8 @@ function prevItem() {
   padding: 10px;
   border: 1px solid green;
   position: relative;
+}
+.cur {
+  font-weight: bold;
 }
 </style>

@@ -29,16 +29,34 @@
             style="width: 100%"
             @blur="queryLoginNames(log.loginName)"
           />
-          <div v-if="log.loginName">
+          <div>
             <select
-              @change="log.loginName = $refs.username.value"
+              @change="
+                log.loginName = $refs.username.value;
+                if (!log.tel) {
+                  log.tel = usernames[$event.target.selectedIndex].tel;
+                }
+              "
               ref="username"
+              @dblclick="
+                log.loginName = $refs.username.value;
+                if (!log.tel) {
+                  log.tel = usernames[$event.target.selectedIndex].tel;
+                }
+              "
             >
               <option v-for="o in usernames" :key="o" :value="o.loginName">
-                {{ o.loginName }} - {{ o.dept }} - {{ o.tel }} - {{ o.status }}
+                {{ o.loginName }} - {{ o.dept }} - {{ o.tel }} -
+                {{ o.status }} - {{ o.dp_login_id }}
               </option>
             </select>
             <a @click="released()">release</a>
+          </div>
+
+          <div>
+            <div>
+              By Tel:<input v-model="bytel" @blur="queryByTel(bytel)" />
+            </div>
           </div>
         </div>
 
@@ -110,11 +128,12 @@
       </div>
     </div>
     <div v-if="showDA">
-      <div>{{ config.labelDA }}</div>
+      <div v-html="config.labelDA"></div>
       <div>dept name:<input v-model="deptName" /></div>
       <div>
-        <table style="width: 100%">
+        <table style="width: 100%" id="da">
           <tr>
+            <td>#</td>
             <td>BD</td>
             <td>LOGIN_NAME</td>
             <td>FULL_NAME</td>
@@ -126,7 +145,8 @@
             <td>IS_DP_USER</td>
           </tr>
 
-          <tr v-for="da in dassearch" :key="da.id">
+          <tr v-for="(da, i) in dassearch" :key="da.id">
+            <td>{{ i + 1 }}</td>
             <td>{{ da.bd }}</td>
             <td>{{ da.loginName }}</td>
             <td>{{ da.fullName }}</td>
@@ -140,7 +160,7 @@
         </table>
       </div>
     </div>
-    <table cellpadding="0" cellspacing="0" style="width: 100%">
+    <table cellpadding="0" cellspacing="0" style="width: 100%; padding: 15px">
       <tr class="trth">
         <th>dept</th>
 
@@ -202,6 +222,7 @@ import pagination from "../components/pagination.vue";
 export default {
   data() {
     return {
+      bytel: "",
       config: {},
       showcontact: 0,
       showDA: 0,
@@ -225,7 +246,7 @@ export default {
         area: "Application",
         type: "",
         logBy: "",
-        status: "",
+        status: "Closed",
         closeDate: "",
         solutionPlan: "",
         logNo: "",
@@ -263,6 +284,14 @@ export default {
     },
     queryLoginNames(name) {
       fetch("/api/supportlog/searchLoginNames?name=" + name)
+        .then((r) => r.json())
+        .then((r) => {
+          this.usernames.length = 0;
+          this.usernames.push(...r);
+        });
+    },
+    queryByTel(name) {
+      fetch("/api/supportlog/searchUserByTel?tel=" + name)
         .then((r) => r.json())
         .then((r) => {
           this.usernames.length = 0;
@@ -335,7 +364,7 @@ export default {
 
       if (!result) return;
       for (let p in this.log) {
-        this.log[p] = "";
+        if (p != "status") this.log[p] = "";
       }
       //  await this.changePage({ page: 1 });
     },
@@ -375,6 +404,9 @@ export default {
         ret = ret.filter(
           (e) => e.tel && e.tel.replace(/\s/g, "").indexOf(this.log.tel) > -1
         );
+      }
+      if (!this.log.tel) {
+        ret = ret.filter((e) => e.status == this.log.status);
       }
       if (this.log.keyword.trim()) {
         let kws = this.log.keyword.split(",");
@@ -417,5 +449,20 @@ th {
 .form {
   padding: 15px;
   border: 2px dashed #ddd;
+}
+#da tr:nth-child(even) {
+  background: #ccc;
+}
+#da {
+  border-collapse: collapse;
+}
+#da tr:nth-child(1) {
+  position: sticky;
+  top: 55px;
+  background: white;
+  font-weight: bold !important;
+}
+#da tr:nth-child(1) td {
+  font-weight: bold !important;
 }
 </style>

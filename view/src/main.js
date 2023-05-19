@@ -8,6 +8,8 @@ import "./assets/main.css";
 
 // 导入截屏插件
 import screenShort from "vue-web-screen-shot";
+import $ from 'jquery'
+window.$ = $;
 
 const app = createApp(App);
 

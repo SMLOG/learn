@@ -1,7 +1,10 @@
 package com.example.support.test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,26 +31,21 @@ public class TestApiController {
 
 		response.setContentType("application/json;charset=utf-8");
 
-		response.getWriter().write("[{\"name\":\"Java-8-11\",\"update\":\"2023-01-01\",\"lang\":\"en\"," + "\"items\":["
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"},"
-				+ "{\"id\":\"efg\",\"title\":\"efg\",\"date\":\"2023\"}]},{\"name\":\"Spring-Springboot\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"WebServie(Soap,Rest)\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"DB-Oracle-MSSql\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"OWB-OBIEE-BI\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"SQL(Dev&Tuning)\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"Linux\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"windows\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"Documents\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"Javascript(Vue)\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"Comunication(Teamwork)\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"Tools(Git,bash,eclipse,sqldeveloper,docker)\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"Mindset()\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]},{\"name\":\"Health()\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"items\":[{\"id\":\"abc\",\"title\":\"abcd\",\"date\":\"2023\"}]}]");
+		response.getWriter().write("["
+				+ "{\"name\":\"Words\",\"update\":\"2023-01-01\",\"type\":\"word\"},"
+				+ "{\"name\":\"Spring-Springboot\",\"update\":\"2023-01-01\",\"lang\":\"en\",\"type\":\"media\"},"
+				+ "{\"name\":\"WebServie(Soap,Rest)\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"DB-Oracle-MSSql\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"OWB-OBIEE-BI\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"SQL(Dev&Tuning)\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"Linux\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"windows\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"Documents\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"Javascript(Vue)\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"Comunication(Teamwork)\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"Tools(Git,bash,eclipse,sqldeveloper,docker)\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"Mindset()\",\"update\":\"2023-01-01\",\"lang\":\"en\"},"
+				+ "{\"name\":\"Health()\",\"update\":\"2023-01-01\",\"lang\":\"en\"}]");
 	}
 
 	@RequestMapping("/word/save")
@@ -70,10 +68,31 @@ public class TestApiController {
 
 	}
 
-	@RequestMapping("/word/list")
+	@RequestMapping("/word/list/Words")
 	public List listWord() {
 
 		return WordRepository.findAll();
 
 	}
+	@RequestMapping("/media/list/Spring-Springboot")
+	public List listMedia() {
+
+		ArrayList<Map<String, Object>> ret = new ArrayList<Map<String,Object>>();
+		
+		HashMap<String, Object> row = new HashMap<String,Object>();
+		row.put("title", "test");
+		row.put("link", "https://vodakm.zeenews.com/vod/ZEE_ENGLISH/SAVING___CURRENTACCOUNT.mp4/SAVING___CURRENTACCOUNT.mp4?id=1");
+		
+		ret.add(row);
+		
+		row = new HashMap<String,Object>();
+		row.put("title", "test2");
+		row.put("link", "https://vodakm.zeenews.com/vod/ZEE_ENGLISH/SAVING___CURRENTACCOUNT.mp4/SAVING___CURRENTACCOUNT.mp4?id=2");
+		
+		ret.add(row);
+		
+		return ret;
+
+	}
+	
 }

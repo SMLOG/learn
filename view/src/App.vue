@@ -18,8 +18,4 @@ const config = useConfigStore();
   </div>
 </template>
 
-<style scoped>
-.body {
-  padding: 32px 24px 96px;
-}
-</style>
+<style scoped></style>
